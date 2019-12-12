@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # create base infra
 terraform init -backend-config=backend.tfvars setup
