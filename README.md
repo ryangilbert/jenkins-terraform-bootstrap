@@ -13,3 +13,9 @@ local to remote s3 backend.
 cd terraform
 ./setup.sh
 ```
+
+## Destroy all resources
+This will destroy all Terraform-managed resources, INCLUDING the Terraform state s3 backend.
+```bash
+terraform destroy base
+```
