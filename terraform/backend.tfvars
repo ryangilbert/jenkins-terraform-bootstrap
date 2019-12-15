@@ -1,4 +1,4 @@
-bucket         = "terraform-state-your-unique-name-here"
+bucket         = "YOUR-UNIQUE-BUCKET-NAME"
 region         = "us-west-1"
 key            = "terraform.tfstate"
 dynamodb_table = "terraform-lock"

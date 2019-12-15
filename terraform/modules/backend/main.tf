@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "terraform-state" {
-  bucket = "${var.bucket}"
+  bucket = var.bucket
   acl    = "private"
 
   versioning {
@@ -14,14 +14,10 @@ resource "aws_s3_bucket" "terraform-state" {
       days = 30
     }
   }
-
-  tags = {
-    origin = "terraform"
-  }
 }
 
 resource "aws_dynamodb_table" "terraform-state-lock" {
-  name           = "${var.dynamodb_table}"
+  name           = var.dynamodb_table
   read_capacity  = 1
   write_capacity = 1
   hash_key       = "LockID"
@@ -29,9 +25,5 @@ resource "aws_dynamodb_table" "terraform-state-lock" {
   attribute {
     name = "LockID"
     type = "S"
-  }
-
-  tags = {
-    origin = "terraform"
   }
 }
