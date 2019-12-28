@@ -44,6 +44,13 @@ resource "aws_security_group" "jenkins" {
     protocol    = "tcp"
     cidr_blocks = [var.ingress_cidr]
   }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 data "aws_ami" "ubuntu" {
@@ -51,7 +58,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
   filter {
@@ -76,4 +83,9 @@ resource "aws_spot_instance_request" "jenkins-master" {
   security_groups             = [aws_security_group.jenkins.id]
   key_name                    = "jenkins-ec2-key"
   wait_for_fulfillment        = "true"
+  user_data                   = data.template_file.cloud-init.rendered
+}
+
+data "template_file" "cloud-init" {
+  template = file("scripts/init.tpl")
 }
