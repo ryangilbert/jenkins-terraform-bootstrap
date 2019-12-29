@@ -74,9 +74,5 @@ resource "aws_spot_instance_request" "jenkins-master" {
   security_groups             = [aws_security_group.jenkins.id]
   key_name                    = "jenkins-ec2-key"
   wait_for_fulfillment        = "true"
-  user_data                   = data.template_file.cloud-init.rendered
-}
-
-data "template_file" "cloud-init" {
-  template = file("user_data/init.yml")
+  user_data                   = file("user_data/init.yml")
 }
