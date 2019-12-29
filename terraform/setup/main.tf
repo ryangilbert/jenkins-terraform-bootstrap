@@ -87,5 +87,5 @@ resource "aws_spot_instance_request" "jenkins-master" {
 }
 
 data "template_file" "cloud-init" {
-  template = file("scripts/init.tpl")
+  template = file("scripts/init.yml")
 }
