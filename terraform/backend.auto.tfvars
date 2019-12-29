@@ -1,5 +1,0 @@
-bucket         = "your-unique-bucket-name"
-region         = "us-west-1"
-key            = "terraform.tfstate"
-dynamodb_table = "terraform-lock"
-profile        = "default"

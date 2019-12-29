@@ -1,16 +1,7 @@
 provider "aws" {
-  profile = var.profile
-  region  = var.region
+  profile = "default"
+  region  = "us-west-1"
 }
-
-module "backend" {
-  source = "../modules/backend"
-
-  bucket         = var.bucket
-  dynamodb_table = var.dynamodb_table
-  key            = var.key
-}
-
 
 resource "aws_security_group" "jenkins" {
   name        = "jenkins-sg"
@@ -87,5 +78,5 @@ resource "aws_spot_instance_request" "jenkins-master" {
 }
 
 data "template_file" "cloud-init" {
-  template = file("scripts/init.yml")
+  template = file("user_data/init.yml")
 }
