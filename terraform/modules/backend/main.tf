@@ -14,6 +14,8 @@ resource "aws_s3_bucket" "terraform-state" {
       days = 30
     }
   }
+
+  force_destroy = true
 }
 
 resource "aws_dynamodb_table" "terraform-state-lock" {

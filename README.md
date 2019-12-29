@@ -3,19 +3,38 @@ Goal: To bootstrap a light-weight Jenkins instance with auto-scaling replicas us
 
 *NOTE: This is a work in progress! The README will be updated with functional steps as they are added.*
 
-## Create AWS infrastructure
-Running this setup script will create a security group in your chosen VPC, an EC2 instance,
-and a DynamoDB table and s3 bucket for remote terraform state management.
+## Replace custom variables for your AWS account
+Update the following values in `terraform/remote_state/backend.auto.tfvars`: 
+* `bucket` - Where your Terraform state will be stored. Must be globally unique! Example: `"terraform-state-my-project"`
 
-You will be prompted by Terraform to confirm you want to apply the AWS resources, and then to move Terraform state from
-local to remote s3 backend.
+Update the following values in `terraform/network.auto.tfvars`:
+* `vpc_id` - VPC that Jenkins will run in. Example: `"vpc-123abcd"`
+* `subnet_id` - ID of a public subnet in your VPC. Example: `"subnet-abcd123"`
+* `ingress_cidr` - CIDR address for inbound traffic to your Jenkins instance. Example: `"192.168.0.0/24"`
+
+## Setup Terraform s3 backend
 ```bash
-cd terraform
-./setup.sh
+cd terraform/remote_state
+terraform init
+terraform apply
 ```
 
-## Destroy all resources
-This will destroy all Terraform-managed resources, INCLUDING the Terraform state s3 backend.
+## Create EC2 instance with Docker and Docker Compose installed
 ```bash
-terraform destroy base
+cd terraform
+terraform init
+terraform apply
+```
+
+## Destroy AWS resources (excluding Terraform state s3 backend)
+```bash
+cd terraform
+terraform destroy
+```
+
+## Destroy Terraform s3 backend
+This will destroy all Terraform state
+```bash
+cd terraform/remote_state
+terraform destroy
 ```

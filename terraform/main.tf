@@ -1,16 +1,7 @@
 provider "aws" {
-  profile = var.profile
-  region  = var.region
+  profile = "default"
+  region  = "us-west-1"
 }
-
-module "backend" {
-  source = "../modules/backend"
-
-  bucket         = var.bucket
-  dynamodb_table = var.dynamodb_table
-  key            = var.key
-}
-
 
 resource "aws_security_group" "jenkins" {
   name        = "jenkins-sg"
@@ -32,10 +23,24 @@ resource "aws_security_group" "jenkins" {
   }
 
   ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.ingress_cidr]
+  }
+
+  ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = [var.ingress_cidr]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -44,7 +49,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
 
   filter {
@@ -69,4 +74,5 @@ resource "aws_spot_instance_request" "jenkins-master" {
   security_groups             = [aws_security_group.jenkins.id]
   key_name                    = "jenkins-ec2-key"
   wait_for_fulfillment        = "true"
+  user_data                   = file("user_data/init.yml")
 }
