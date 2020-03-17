@@ -44,29 +44,19 @@ resource "aws_security_group" "jenkins" {
   }
 }
 
-data "aws_ami" "ubuntu" {
+data "aws_ami" "jenkins" {
+  owners      = ["self"]
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["jenkins*"]
   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  owners = ["099720109477"] # Canonical
 }
 
 resource "aws_spot_instance_request" "jenkins-master" {
-  ami                         = data.aws_ami.ubuntu.id
+  ami                         = data.aws_ami.jenkins.id
   spot_price                  = "0.0041"
   instance_type               = "t2.micro"
   subnet_id                   = var.subnet_id

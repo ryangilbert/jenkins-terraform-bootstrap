@@ -11,6 +11,8 @@ Update the following values in `terraform/network.auto.tfvars`:
 * `vpc_id` - VPC that Jenkins will run in. Example: `"vpc-123abcd"`
 * `subnet_id` - ID of a public subnet in your VPC. Example: `"subnet-abcd123"`
 * `ingress_cidr` - CIDR address for inbound traffic to your Jenkins instance. Example: `"192.168.0.0/24"`
+# Setup
+Follow these steps to create your Jenkins server from scratch.
 
 ## Setup Terraform s3 backend
 ```bash
@@ -19,12 +21,42 @@ terraform init
 terraform apply
 ```
 
+## Create image with Packer
+This AMI will include the Dockerfile and plugins.txt needed to run the Jenkins docker image.
+
+Before running this, ensure you have set the following env variables:
+
+`export AWS_ACCESS_KEY_ID=YOUR_AWS_ACCESS_KEY`  
+`export AWS_SECRET_ACCESS_KEY=YOUR_AWS_SECRET_KEY`
+
+```bash
+cd terraform/jenkins
+packer validate jenkins_image.json
+packer build \
+    -var "aws_access_key=${AWS_ACCESS_KEY_ID}" \
+    -var "aws_secret_key=${AWS_SECRET_ACCESS_KEY}" \
+    jenkins_image.json
+```
+
 ## Create EC2 instance with Docker and Docker Compose installed
 ```bash
 cd terraform
 terraform init
 terraform apply
 ```
+
+## Build and run Jenkins docker image
+```bash
+cd terraform/jenkins
+docker build -t jenkins/custom:latest .
+
+# This will make the jenkins_home directory an explicit volume, so it can be attached to other containers when you need to upgrade.
+# Important! The output of this command will give you the admin password to your Jenkins instance. Be sure to copy it somewhere safe!
+docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/custom:latest
+```
+
+# Cleanup
+Follow these instructions to destroy your Jenkins server and all dependent infrastructure.
 
 ## Destroy AWS resources (excluding Terraform state s3 backend)
 ```bash
