@@ -38,21 +38,11 @@ packer build \
     jenkins_image.json
 ```
 
-## Create EC2 instance with Docker and Docker Compose installed
+## Create EC2 instance from Packer image and start Jenkins
 ```bash
 cd terraform
 terraform init
 terraform apply
-```
-
-## Build and run Jenkins docker image
-```bash
-cd terraform/jenkins
-docker build -t jenkins/custom:latest .
-
-# This will make the jenkins_home directory an explicit volume, so it can be attached to other containers when you need to upgrade.
-# Important! The output of this command will give you the admin password to your Jenkins instance. Be sure to copy it somewhere safe!
-docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/custom:latest
 ```
 
 # Cleanup
