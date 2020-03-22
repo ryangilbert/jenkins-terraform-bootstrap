@@ -1,7 +1,6 @@
 # jenkins-terraform-bootstrap
 Bootstrap a Jenkins server using Packer, Terraform, Docker, and AWS with minimal manual setup.
 
-*NOTE: This is a work in progress! The README will be updated with functional steps as they are added.*
 ## Requirements
 
 * [AWS](https://aws.amazon.com/) free-tier account
@@ -54,7 +53,7 @@ cd terraform
 terraform init
 terraform apply
 ```
-In the output, retrieve the public_dns and public_ip for the instance that was created.
+In the output, you should see the public ip address and public dns name for your instance. Your instance will take a few minutes to be up and running.
 
 ## Retrieve Jenkins admin password
 Once the EC2 instance is running, ssh to the machine to retrieve the jenkins password from the docker container.
@@ -71,6 +70,13 @@ CONTAINER_ID=$(docker ps -l -q)
 docker exec -it $CONTAINER_ID /bin/bash
 cat var/jenkins_home/secrets/initialAdminPassword
 ```
+Copy this password
+
+## Login to Jenkins
+Use the public dns name that was provided in the Terraform output to login to the Jenkins instance:
+`http://<instance_public_dns>:8080`
+
+You should see the "Unlock Jenkins" screen. Use the admin password to login.
 
 # Cleanup
 Follow these instructions to destroy your Jenkins server and all dependent infrastructure.
