@@ -61,7 +61,7 @@ You will need the following:
 * Path of the EC2 key you created earlier
 * EC2 instance private_ip from Terraform output
 ```bash
-ssh -i <ec2_pem_key_location> ubuntu@54.67.2.82
+ssh -i <ec2_pem_key_location> ubuntu@<instance_public_ip>
 ```
 From the EC2 instance:
 ```bash
