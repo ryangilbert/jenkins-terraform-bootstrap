@@ -3,6 +3,12 @@
 package_update: true
 package_upgrade: true
 
+users:
+  - default
+  - name: jenkins
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, docker
+
 apt:
   sources:
     docker.list:
@@ -21,3 +27,8 @@ power_state:
 runcmd:
   - sudo curl -L https://github.com/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
   - sudo chmod +x /usr/local/bin/docker-compose
+  - sudo mv /home/ubuntu/Dockerfile /home/jenkins/Dockerfile
+  - sudo mv /home/ubuntu/plugins.txt /home/jenkins/plugins.txt
+  - cd /home/jenkins
+  - docker build -t jenkins/custom:latest .
+  - docker run -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/custom:latest
